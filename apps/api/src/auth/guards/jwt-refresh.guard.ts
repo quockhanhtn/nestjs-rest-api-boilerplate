@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { RefreshTokenStrategyName } from '../strategies';
+import { JwtRefreshStrategyName } from '../strategies';
 
 @Injectable()
-export class RefreshTokenGuard extends AuthGuard(RefreshTokenStrategyName) {
+export class JwtRefreshGuard extends AuthGuard(JwtRefreshStrategyName) {
   constructor() {
     super();
   }

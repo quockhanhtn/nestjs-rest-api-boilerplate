@@ -9,7 +9,7 @@ import {
   GetAuthPayload,
   GetAuthPayloadWithRefresh,
   Public,
-  RefreshTokenGuard,
+  JwtRefreshGuard,
   TokenPair,
 } from './';
 import { AuthService } from './auth.service';
@@ -48,7 +48,7 @@ export class AuthController {
   }
 
   @Public()
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(JwtRefreshGuard)
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   refreshToken(@GetAuthPayloadWithRefresh() authPayload: AuthPayloadWithRefresh) {

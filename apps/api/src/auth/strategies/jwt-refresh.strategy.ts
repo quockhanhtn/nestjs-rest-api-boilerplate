@@ -7,10 +7,10 @@ import { ConfigService } from '@libs/infrastructures/config';
 
 import { AuthPayload, AuthPayloadWithRefresh } from '../types';
 
-export const RefreshTokenStrategyName = 'jwt-strategy-rt';
+export const JwtRefreshStrategyName = 'jwt-refresh-strategy';
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(Strategy, RefreshTokenStrategyName) {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, JwtRefreshStrategyName) {
   constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

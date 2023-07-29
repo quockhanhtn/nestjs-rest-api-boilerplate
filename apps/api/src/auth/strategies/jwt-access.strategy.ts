@@ -6,9 +6,9 @@ import { ConfigService } from '@libs/infrastructures/config';
 
 import { AuthPayload } from '../types';
 
-export const AccessTokenStrategyName = 'jwt-strategy-at';
+export const JwtAccessStrategyName = 'jwt-access-strategy';
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, AccessTokenStrategyName) {
+export class JwtAccessStrategy extends PassportStrategy(Strategy, JwtAccessStrategyName) {
   constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
