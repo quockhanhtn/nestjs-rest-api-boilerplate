@@ -1,0 +1,19 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+/dist
+/.next
+
+# storybook
+!.storybook
+
+# config files
+.eslintrc.js
+.prettierrc.js

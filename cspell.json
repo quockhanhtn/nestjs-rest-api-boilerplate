@@ -1,0 +1,24 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "bowser",
+    "datasources",
+    "envalid",
+    "ianvs",
+    "maxlength",
+    "mgmt",
+    "mydb",
+    "Parens"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "endpoints/**",
+    "*coverage/**",
+    ".husky/**",
+    ".github/**",
+    "dist/**",
+    "logs/**",
+    "pnpm-lock.yaml"
+  ]
+}
