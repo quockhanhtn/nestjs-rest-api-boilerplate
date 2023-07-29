@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 
 import { RequestMetadata } from '@libs/core/request';
 import { ConfigService, MongodbService } from '@libs/infrastructures';
-import { Role, UserDocument } from '@libs/infrastructures/mongodb';
+import { ERole, UserDocument } from '@libs/infrastructures/mongodb';
 
 import { UsersService } from '../users/users.service';
 import { TokenPair } from './';
@@ -117,7 +117,7 @@ export class AuthService {
     return bcrypt.hash(data, 10);
   }
 
-  private async _generateToken(userId: string, role: Role): Promise<TokenPair> {
+  private async _generateToken(userId: string, role: ERole): Promise<TokenPair> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
