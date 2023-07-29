@@ -4,7 +4,7 @@ import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
 import { MongooseEntityAbstract } from '@libs/core/mongoose/abstracts';
 import { MongooseEntity } from '@libs/core/mongoose/decorators';
 
-import { Role } from '../../roles/enums';
+import { Role } from '../enums';
 
 export const UserCollectionName = 'users';
 

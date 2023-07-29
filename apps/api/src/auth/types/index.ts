@@ -1,4 +1,4 @@
-import { Role } from '@libs/infrastructures/roles';
+import { Role } from '@libs/infrastructures/mongodb';
 
 export type AuthPayload = {
   sub: string;

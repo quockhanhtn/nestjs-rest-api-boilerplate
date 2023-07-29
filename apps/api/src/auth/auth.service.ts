@@ -4,8 +4,7 @@ import * as bcrypt from 'bcrypt';
 
 import { RequestMetadata } from '@libs/core/request';
 import { ConfigService, MongodbService } from '@libs/infrastructures';
-import { UserDocument } from '@libs/infrastructures/mongodb/entities';
-import { Role } from '@libs/infrastructures/roles';
+import { Role, UserDocument } from '@libs/infrastructures/mongodb';
 
 import { UsersService } from '../users/users.service';
 import { TokenPair } from './';
