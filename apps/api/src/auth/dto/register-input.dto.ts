@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 
-import { IsAtLeastOneField } from '@libs/core/utils/class-validator';
+import { IsAtLeastOneField } from '@libs/core/class-validator';
 
 export class RegisterInputDto {
   @ApiProperty({ required: false })

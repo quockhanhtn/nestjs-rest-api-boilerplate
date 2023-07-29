@@ -1,7 +1,7 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
 
-import { MongooseEntityAbstract } from '@libs/core/mongoose/abstracts';
+import { MongooseBaseEntity } from '@libs/core/mongoose/bases';
 import { MongooseEntity } from '@libs/core/mongoose/decorators';
 
 import { UserEntity } from './user.entity';
@@ -9,7 +9,7 @@ import { UserEntity } from './user.entity';
 export const UserSessionCollectionName = 'user-sessions';
 
 @MongooseEntity({ collection: UserSessionCollectionName })
-export class UserSessionEntity extends MongooseEntityAbstract {
+export class UserSessionEntity extends MongooseBaseEntity {
   @Prop({
     required: true,
     ref: UserEntity.name,

@@ -14,9 +14,14 @@ import {
   IMongooseSoftDeleteManyOptions,
 } from '@libs/core/mongoose/interfaces';
 
+import { MongooseBaseEntity } from './mongoose.base.entity';
+
 const DATABASE_DELETED_AT_FIELD_NAME = 'deletedAt';
 
-export abstract class MongooseRepositoryAbstract<Entity, EntityDocument> {
+export abstract class MongooseBaseRepository<
+  Entity extends MongooseBaseEntity,
+  EntityDocument extends Document,
+> {
   protected _repository: Model<Entity>;
   protected _joinOnFind?: PopulateOptions | PopulateOptions[];
 

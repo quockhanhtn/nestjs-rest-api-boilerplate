@@ -1,7 +1,7 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
 
-import { MongooseEntityAbstract } from '@libs/core/mongoose/abstracts';
+import { MongooseBaseEntity } from '@libs/core/mongoose/bases';
 import { MongooseEntity } from '@libs/core/mongoose/decorators';
 
 import { ERole } from '../enums';
@@ -9,7 +9,7 @@ import { ERole } from '../enums';
 export const UserCollectionName = 'users';
 
 @MongooseEntity({ collection: UserCollectionName })
-export class UserEntity extends MongooseEntityAbstract {
+export class UserEntity extends MongooseBaseEntity {
   @Prop({
     type: String,
     trim: true,
