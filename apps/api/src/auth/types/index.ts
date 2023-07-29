@@ -1,8 +1,8 @@
-import { ERole } from '@libs/infrastructures/mongodb';
+import { RoleEnum } from '@libs/infrastructures/mongodb';
 
 export type AuthPayload = {
   sub: string;
-  roles: ERole[];
+  roles: RoleEnum[];
 };
 
 export type AuthPayloadWithRefresh = AuthPayload & {

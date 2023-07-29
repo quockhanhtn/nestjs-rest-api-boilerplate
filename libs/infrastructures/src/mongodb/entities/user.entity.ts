@@ -4,7 +4,7 @@ import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
 import { MongooseBaseEntity } from '@libs/core/mongoose/bases';
 import { MongooseEntity } from '@libs/core/mongoose/decorators';
 
-import { ERole } from '../enums';
+import { RoleEnum } from '../enums';
 
 export const UserCollectionName = 'users';
 
@@ -59,8 +59,8 @@ export class UserEntity extends MongooseBaseEntity {
   @Prop()
   hashedPwd: string;
 
-  @Prop({ type: String, enum: ERole, default: ERole.User })
-  role: ERole;
+  @Prop({ type: String, enum: RoleEnum, default: RoleEnum.User })
+  role: RoleEnum;
 }
 
 export type UserDocument = UserEntity & Document;
