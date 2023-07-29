@@ -1,1 +1,1 @@
-export * from './get-request-metadata.decorators';
+export * from './request-info.decorators';

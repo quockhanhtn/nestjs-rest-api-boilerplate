@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { ConfigService } from '@libs/infrastructures/config';
 
-import { AuthPayload, AuthPayloadWithRefresh } from '../types';
+import { JwtAccessPayloadData, JwtRefreshPayloadData } from '../types';
 
 export const JwtRefreshStrategyName = 'jwt-refresh-strategy';
 
@@ -18,7 +18,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, JwtRefreshStr
       passReqToCallback: true,
     });
   }
-  validate(req: Request, payload: AuthPayload): AuthPayloadWithRefresh {
+  validate(req: Request, payload: JwtAccessPayloadData): JwtRefreshPayloadData {
     const refreshToken = req?.get('authorization')?.replace('Bearer', '').trim();
 
     if (!refreshToken) {

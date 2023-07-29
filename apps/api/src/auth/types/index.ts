@@ -1,11 +1,11 @@
 import { RoleEnum } from '@libs/infrastructures/mongodb';
 
-export type AuthPayload = {
+export type JwtAccessPayloadData = {
   sub: string;
-  roles: RoleEnum[];
+  role: RoleEnum;
 };
 
-export type AuthPayloadWithRefresh = AuthPayload & {
+export type JwtRefreshPayloadData = JwtAccessPayloadData & {
   refreshToken: string;
 };
 

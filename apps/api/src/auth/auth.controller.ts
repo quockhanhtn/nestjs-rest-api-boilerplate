@@ -1,15 +1,15 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { GetRequestMetadata, RequestMetadata } from '@libs/core/request';
+import { RequestInfo, RequestInfoData } from '@libs/core/request';
 
 import {
-  AuthPayload,
-  AuthPayloadWithRefresh,
-  GetAuthPayload,
-  GetAuthPayloadWithRefresh,
-  Public,
+  JwtAccessPayload,
+  JwtAccessPayloadData,
   JwtRefreshGuard,
+  JwtRefreshPayload,
+  JwtRefreshPayloadData,
+  Public,
   TokenPair,
 } from './';
 import { AuthService } from './auth.service';
@@ -25,9 +25,9 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   register(
     @Body() body: RegisterInputDto,
-    @GetRequestMetadata() meta: RequestMetadata,
+    @RequestInfo() reqInfo: RequestInfoData,
   ): Promise<TokenPair> {
-    console.log('meta', meta);
+    console.log('meta', reqInfo);
     return this.authService.register(body);
   }
 
@@ -36,14 +36,14 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   login(
     @Body() body: LoginInputDto,
-    @GetRequestMetadata() meta: RequestMetadata,
+    @RequestInfo() reqInfo: RequestInfoData,
   ): Promise<AuthOutputDto> {
-    return this.authService.login(body.account, body.password, meta);
+    return this.authService.login(body.account, body.password, reqInfo);
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@GetAuthPayload() authPayload: AuthPayload) {
+  logout(@JwtAccessPayload() authPayload: JwtAccessPayloadData) {
     return this.authService.logout(authPayload.sub);
   }
 
@@ -51,7 +51,7 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
-  refreshToken(@GetAuthPayloadWithRefresh() authPayload: AuthPayloadWithRefresh) {
+  refreshToken(@JwtRefreshPayload() authPayload: JwtRefreshPayloadData) {
     return this.authService.refreshToken(authPayload.sub, authPayload.refreshToken);
   }
 }

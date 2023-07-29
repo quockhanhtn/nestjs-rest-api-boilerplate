@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { ConfigService } from '@libs/infrastructures/config';
 
-import { AuthPayload } from '../types';
+import { JwtAccessPayloadData } from '../types';
 
 export const JwtAccessStrategyName = 'jwt-access-strategy';
 @Injectable()
@@ -17,7 +17,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, JwtAccessStrat
     });
   }
 
-  validate(payload: AuthPayload) {
+  validate(payload: JwtAccessPayloadData) {
     console.log('payload', payload);
     return payload;
   }

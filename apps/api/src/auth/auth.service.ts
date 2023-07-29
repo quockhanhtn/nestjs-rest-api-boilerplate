@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { RequestMetadata } from '@libs/core/request';
+import { RequestInfoData } from '@libs/core/request';
 import { ConfigService, MongodbService } from '@libs/infrastructures';
 import { RoleEnum, UserDocument } from '@libs/infrastructures/mongodb';
 
@@ -43,7 +43,7 @@ export class AuthService {
     return token;
   }
 
-  async login(account: string, password: string, meta: RequestMetadata): Promise<AuthOutputDto> {
+  async login(account: string, password: string, reqInfo: RequestInfoData): Promise<AuthOutputDto> {
     let user: UserDocument;
     if (account.includes('@')) {
       // login with email
@@ -115,6 +115,22 @@ export class AuthService {
 
   private _hashData(data: string): Promise<string> {
     return bcrypt.hash(data, 10);
+  }
+
+  private async _generateAccessToken(payload: Buffer | object): Promise<string> {
+    const at = await this.jwtService.signAsync(payload, {
+      secret: this.configService.jwt.atSecret,
+      expiresIn: this.configService.jwt.rtExpired,
+    });
+    return at;
+  }
+
+  private async _generateRefreshToken(payload: Buffer | object): Promise<string> {
+    const rt = await this.jwtService.signAsync(payload, {
+      secret: this.configService.jwt.rtSecret,
+      expiresIn: this.configService.jwt.rtExpired,
+    });
+    return rt;
   }
 
   private async _generateToken(userId: string, role: RoleEnum): Promise<TokenPair> {
