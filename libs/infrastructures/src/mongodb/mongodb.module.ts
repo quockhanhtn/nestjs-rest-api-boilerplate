@@ -3,7 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { ConfigService } from '@libs/infrastructures';
 
-import { UserEntity, UserSchema, UserSessionEntity, UserSessionSchema } from './entities';
+import {
+  CategoryEntity,
+  CategorySchema,
+  UserEntity,
+  UserSchema,
+  UserSessionEntity,
+  UserSessionSchema,
+} from './entities';
 import { MongodbService } from './mongodb.service';
 
 @Global()
@@ -23,6 +30,10 @@ import { MongodbService } from './mongodb.service';
       {
         name: UserSessionEntity.name,
         schema: UserSessionSchema,
+      },
+      {
+        name: CategoryEntity.name,
+        schema: CategorySchema,
       },
     ]),
   ],
