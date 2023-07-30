@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidV4 } from 'uuid';
@@ -9,7 +9,14 @@ import { RoleEnum, UserDocument } from '@libs/infrastructures/mongodb';
 
 import { UserSessionService } from '../user-session/user-session.service';
 import { UserService } from '../user/user.service';
-import { JwtAccessPayloadData, JwtRefreshPayloadData, TokenPair } from './';
+import {
+  AccountNotFoundException,
+  InvalidInputException,
+  InvalidRefreshTokenException,
+  JwtAccessPayloadData,
+  JwtRefreshPayloadData,
+  TokenPair,
+} from './';
 import { AuthOutputDto, RegisterInputDto } from './dto';
 
 @Injectable()
@@ -26,13 +33,13 @@ export class AuthService {
     if (input.email) {
       const isExistingEmail = await this.userService.isExistingEmail(input.email);
       if (isExistingEmail) {
-        throw new HttpException('Email already taken', HttpStatus.BAD_REQUEST);
+        throw new InvalidInputException('Email already taken');
       }
     }
     if (input.phoneNumber) {
       const isExistingPhone = await this.userService.isExistingPhoneNumber(input.phoneNumber);
       if (isExistingPhone) {
-        throw new HttpException('Phone number already taken', HttpStatus.BAD_REQUEST);
+        throw new InvalidInputException('Phone number already taken');
       }
     }
 
@@ -57,12 +64,12 @@ export class AuthService {
     }
 
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new AccountNotFoundException();
     }
 
     const isCorrectPassword = await bcrypt.compare(password, user.hashedPwd);
     if (!isCorrectPassword) {
-      throw new HttpException('Password incorrect', HttpStatus.UNAUTHORIZED);
+      throw new InvalidInputException('Password incorrect');
     }
 
     const rs = await this._authentication(user, reqInfo);
@@ -72,7 +79,7 @@ export class AuthService {
   async logout(sessionId: string, refreshToken: string) {
     const isValid = await this.sessionService.validateSession(sessionId, refreshToken);
     if (!isValid) {
-      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+      throw new InvalidRefreshTokenException();
     }
     await this.sessionService.clearPrevSession(sessionId);
     return true;
@@ -86,13 +93,13 @@ export class AuthService {
   ): Promise<TokenPair> {
     const isValid = await this.sessionService.validateSession(sessionId, refreshToken);
     if (!isValid) {
-      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+      throw new InvalidRefreshTokenException();
     }
     await this.sessionService.clearPrevSession(sessionId);
 
     const role = await this.userService.getUserRole(userId);
     if (!role) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new AccountNotFoundException();
     }
 
     const [accessToken, newRefreshToken] = await Promise.all([
