@@ -4,10 +4,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
 import { IS_PUBLIC_KEY } from '../decorators';
-import { AccessTokenStrategyName } from '../strategies';
+import { JwtAccessStrategyName } from '../strategies';
 
 @Injectable()
-export class AccessTokenGuard extends AuthGuard(AccessTokenStrategyName) {
+export class JwtAccessGuard extends AuthGuard(JwtAccessStrategyName) {
   constructor(private reflector: Reflector) {
     super();
   }

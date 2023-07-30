@@ -1,15 +1,15 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
 
-import { MongooseEntityAbstract } from '@libs/core/mongoose/abstracts';
+import { MongooseBaseEntity } from '@libs/core/mongoose/bases';
 import { MongooseEntity } from '@libs/core/mongoose/decorators';
 
-import { Role } from '../../roles/enums';
+import { RoleEnum } from '../enums';
 
 export const UserCollectionName = 'users';
 
 @MongooseEntity({ collection: UserCollectionName })
-export class UserEntity extends MongooseEntityAbstract {
+export class UserEntity extends MongooseBaseEntity {
   @Prop({
     type: String,
     trim: true,
@@ -59,11 +59,9 @@ export class UserEntity extends MongooseEntityAbstract {
   @Prop()
   hashedPwd: string;
 
-  @Prop({ type: String, enum: Role, default: Role.User })
-  role: Role;
+  @Prop({ type: String, enum: RoleEnum, default: RoleEnum.User })
+  role: RoleEnum;
 }
-
-export type UserDocument = UserEntity & Document;
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity);
 
@@ -76,3 +74,5 @@ UserSchema.pre('save', function (next: CallbackWithoutResultAndOptionalError) {
   }
   next();
 });
+
+export type UserDocument = UserEntity & Document;

@@ -4,11 +4,11 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { ConfigService } from '@libs/infrastructures/config';
 
-import { AuthPayload } from '../types';
+import { JwtAccessPayloadData } from '../types';
 
-export const AccessTokenStrategyName = 'jwt-strategy-at';
+export const JwtAccessStrategyName = 'jwt-access-strategy';
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, AccessTokenStrategyName) {
+export class JwtAccessStrategy extends PassportStrategy(Strategy, JwtAccessStrategyName) {
   constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -17,8 +17,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, AccessTokenS
     });
   }
 
-  validate(payload: AuthPayload) {
-    console.log('payload', payload);
+  validate(payload: JwtAccessPayloadData): JwtAccessPayloadData {
     return payload;
   }
 }

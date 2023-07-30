@@ -8,6 +8,7 @@ export interface IMongooseFindOneOptions<T = any> extends Pick<IPaginationOption
   join?: boolean | PopulateOptions | PopulateOptions[];
   session?: T;
   withDeleted?: boolean;
+  lean?: boolean;
 }
 
 export type IMongooseGetTotalOptions<T = any> = Pick<

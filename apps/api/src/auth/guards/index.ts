@@ -1,2 +1,2 @@
-export * from './access-token.guard';
-export * from './refresh-token.guard';
+export * from './jwt-access.guard';
+export * from './jwt-refresh.guard';

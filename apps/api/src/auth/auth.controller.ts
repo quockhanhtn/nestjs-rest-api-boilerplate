@@ -1,19 +1,11 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { GetRequestMetadata, RequestMetadata } from '@libs/core/request';
+import { RequestInfo, RequestInfoData } from '@libs/core/request';
 
-import {
-  AuthPayload,
-  AuthPayloadWithRefresh,
-  GetAuthPayload,
-  GetAuthPayloadWithRefresh,
-  Public,
-  RefreshTokenGuard,
-  TokenPair,
-} from './';
+import { JwtRefreshGuard, JwtRefreshPayload, JwtRefreshPayloadData, Public } from './';
 import { AuthService } from './auth.service';
-import { AuthOutputDto, LoginInputDto, RegisterInputDto } from './dto';
+import { LoginInputDto, RegisterInputDto } from './dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,35 +15,34 @@ export class AuthController {
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  register(
-    @Body() body: RegisterInputDto,
-    @GetRequestMetadata() meta: RequestMetadata,
-  ): Promise<TokenPair> {
-    console.log('meta', meta);
-    return this.authService.register(body);
+  register(@Body() body: RegisterInputDto, @RequestInfo() reqInfo: RequestInfoData) {
+    return this.authService.register(body, reqInfo);
   }
 
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  login(
-    @Body() body: LoginInputDto,
-    @GetRequestMetadata() meta: RequestMetadata,
-  ): Promise<AuthOutputDto> {
-    return this.authService.login(body.account, body.password, meta);
+  login(@Body() body: LoginInputDto, @RequestInfo() reqInfo: RequestInfoData) {
+    return this.authService.login(body.account, body.password, reqInfo);
   }
 
   @Post('logout')
+  @UseGuards(JwtRefreshGuard)
   @HttpCode(HttpStatus.OK)
-  logout(@GetAuthPayload() authPayload: AuthPayload) {
-    return this.authService.logout(authPayload.sub);
+  logout(@JwtRefreshPayload() refreshPayload: JwtRefreshPayloadData) {
+    const { sessionId, refreshToken } = refreshPayload;
+    return this.authService.logout(sessionId, refreshToken);
   }
 
   @Public()
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(JwtRefreshGuard)
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
-  refreshToken(@GetAuthPayloadWithRefresh() authPayload: AuthPayloadWithRefresh) {
-    return this.authService.refreshToken(authPayload.sub, authPayload.refreshToken);
+  refreshToken(
+    @JwtRefreshPayload() refreshPayload: JwtRefreshPayloadData,
+    @RequestInfo() reqInfo: RequestInfoData,
+  ) {
+    const { sub, sessionId, refreshToken } = refreshPayload;
+    return this.authService.refreshToken(sub, sessionId, refreshToken, reqInfo);
   }
 }

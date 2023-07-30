@@ -1,11 +1,11 @@
 import { Model } from 'mongoose';
 
-import { MongooseRepositoryAbstract } from '@libs/core/mongoose/abstracts';
+import { MongooseBaseRepository } from '@libs/core/mongoose/bases';
 import { MongooseModel } from '@libs/core/mongoose/decorators';
 
 import { UserEntity, UserSessionDocument, UserSessionEntity } from '../entities';
 
-export class UserSessionRepository extends MongooseRepositoryAbstract<
+export class UserSessionRepository extends MongooseBaseRepository<
   UserSessionEntity,
   UserSessionDocument
 > {

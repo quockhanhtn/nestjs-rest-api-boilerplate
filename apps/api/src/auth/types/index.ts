@@ -1,11 +1,13 @@
-import { Role } from '@libs/infrastructures/roles';
+import { RoleEnum } from '@libs/infrastructures/mongodb';
 
-export type AuthPayload = {
+export type JwtAccessPayloadData = {
   sub: string;
-  roles: Role[];
+  role: RoleEnum;
 };
 
-export type AuthPayloadWithRefresh = AuthPayload & {
+export type JwtRefreshPayloadData = {
+  sub: string;
+  sessionId: string;
   refreshToken: string;
 };
 

@@ -4,18 +4,19 @@ import { APP_GUARD } from '@nestjs/core';
 import { RequestLoggerMiddleware } from '@libs/core/request';
 import { ConfigModule, MongodbModule } from '@libs/infrastructures';
 
-import { AccessTokenGuard } from './auth';
+import { JwtAccessGuard } from './auth';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
-import { UsersModule } from './users/users.module';
+import { UserSessionModule } from './user-session/user-session.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [ConfigModule, MongodbModule, AuthModule, UsersModule, HealthModule],
+  imports: [ConfigModule, MongodbModule, AuthModule, UserModule, HealthModule, UserSessionModule],
   controllers: [],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AccessTokenGuard,
+      useClass: JwtAccessGuard,
     },
   ],
 })

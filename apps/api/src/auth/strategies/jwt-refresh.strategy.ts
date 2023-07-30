@@ -5,28 +5,30 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { ConfigService } from '@libs/infrastructures/config';
 
-import { AuthPayload, AuthPayloadWithRefresh } from '../types';
+import { JwtRefreshPayloadData } from '../types';
 
-export const RefreshTokenStrategyName = 'jwt-strategy-rt';
+export const JwtRefreshStrategyName = 'jwt-refresh-strategy';
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(Strategy, RefreshTokenStrategyName) {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, JwtRefreshStrategyName) {
   constructor(configService: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
       secretOrKey: configService.jwt.rtSecret,
       passReqToCallback: true,
     });
   }
-  validate(req: Request, payload: AuthPayload): AuthPayloadWithRefresh {
-    const refreshToken = req?.get('authorization')?.replace('Bearer', '').trim();
+
+  validate(req: Request, payload: JwtRefreshPayloadData): JwtRefreshPayloadData {
+    const refreshToken = req?.body?.refreshToken;
 
     if (!refreshToken) {
       throw new HttpException('Refresh token malformed', HttpStatus.UNAUTHORIZED);
     }
 
     return {
-      ...payload,
+      sub: payload.sub,
+      sessionId: payload.sessionId,
       refreshToken,
     };
   }

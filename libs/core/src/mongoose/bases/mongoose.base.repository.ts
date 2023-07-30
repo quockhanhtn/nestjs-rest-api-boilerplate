@@ -14,9 +14,14 @@ import {
   IMongooseSoftDeleteManyOptions,
 } from '@libs/core/mongoose/interfaces';
 
+import { MongooseBaseEntity } from './mongoose.base.entity';
+
 const DATABASE_DELETED_AT_FIELD_NAME = 'deletedAt';
 
-export abstract class MongooseRepositoryAbstract<Entity, EntityDocument> {
+export abstract class MongooseBaseRepository<
+  Entity extends MongooseBaseEntity,
+  EntityDocument extends Document,
+> {
   protected _repository: Model<Entity>;
   protected _joinOnFind?: PopulateOptions | PopulateOptions[];
 
@@ -66,6 +71,10 @@ export abstract class MongooseRepositoryAbstract<Entity, EntityDocument> {
 
     if (options?.session) {
       findAll.session(options.session);
+    }
+
+    if (options?.lean) {
+      findAll.lean();
     }
 
     return findAll.lean() as any;
@@ -157,6 +166,10 @@ export abstract class MongooseRepositoryAbstract<Entity, EntityDocument> {
       findOne.sort(options.order);
     }
 
+    if (options?.lean) {
+      findOne.lean();
+    }
+
     return findOne.exec() as any;
   }
 
@@ -197,6 +210,10 @@ export abstract class MongooseRepositoryAbstract<Entity, EntityDocument> {
 
     if (options?.order) {
       findOne.sort(options.order);
+    }
+
+    if (options?.lean) {
+      findOne.lean();
     }
 
     return findOne.exec() as any;
@@ -365,12 +382,12 @@ export abstract class MongooseRepositoryAbstract<Entity, EntityDocument> {
       );
     }
 
-    const result = await exist;
+    const result = await exist.lean();
     return result ? true : false;
   }
 
-  async create<Dto = any>(
-    data: Dto,
+  async create(
+    data: Partial<Entity>,
     options?: IMongooseCreateOptions<ClientSession>,
   ): Promise<EntityDocument> {
     const dataCreate: Record<string, any> = data;
