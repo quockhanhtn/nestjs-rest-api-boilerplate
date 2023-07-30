@@ -21,9 +21,10 @@ async function bootstrap() {
 
   // setup swagger
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('eCommerce API')
-    .setDescription('Rest API for eCommerce system')
-    .setVersion('1.0')
+    .setTitle('NestJS REST API boilerplate')
+    .setDescription('NestJS REST API boilerplate')
+    .setVersion('0.0.1')
+    .addBearerAuth()
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/swagger', app, swaggerDocument);

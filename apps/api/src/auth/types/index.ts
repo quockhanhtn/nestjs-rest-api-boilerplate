@@ -5,7 +5,9 @@ export type JwtAccessPayloadData = {
   role: RoleEnum;
 };
 
-export type JwtRefreshPayloadData = JwtAccessPayloadData & {
+export type JwtRefreshPayloadData = {
+  sub: string;
+  sessionId: string;
   refreshToken: string;
 };
 

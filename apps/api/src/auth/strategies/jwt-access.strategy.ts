@@ -17,8 +17,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, JwtAccessStrat
     });
   }
 
-  validate(payload: JwtAccessPayloadData) {
-    console.log('payload', payload);
+  validate(payload: JwtAccessPayloadData): JwtAccessPayloadData {
     return payload;
   }
 }

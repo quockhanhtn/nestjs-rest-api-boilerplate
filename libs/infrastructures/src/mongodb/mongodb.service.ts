@@ -7,8 +7,8 @@ import { UserRepository, UserSessionRepository } from './repositories';
 
 @Injectable()
 export class MongodbService implements OnApplicationBootstrap {
-  users: UserRepository;
-  userSessions: UserSessionRepository;
+  usersRepo: UserRepository;
+  userSessionsRepo: UserSessionRepository;
 
   constructor(
     @InjectModel(UserEntity.name)
@@ -18,7 +18,7 @@ export class MongodbService implements OnApplicationBootstrap {
   ) {}
 
   onApplicationBootstrap() {
-    this.users = new UserRepository(this.userModel);
-    this.userSessions = new UserSessionRepository(this.userSessionModel);
+    this.usersRepo = new UserRepository(this.userModel);
+    this.userSessionsRepo = new UserSessionRepository(this.userSessionModel);
   }
 }

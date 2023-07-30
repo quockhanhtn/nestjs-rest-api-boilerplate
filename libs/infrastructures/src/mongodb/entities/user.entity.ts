@@ -63,8 +63,6 @@ export class UserEntity extends MongooseBaseEntity {
   role: RoleEnum;
 }
 
-export type UserDocument = UserEntity & Document;
-
 export const UserSchema = SchemaFactory.createForClass(UserEntity);
 
 UserSchema.pre('save', function (next: CallbackWithoutResultAndOptionalError) {
@@ -76,3 +74,5 @@ UserSchema.pre('save', function (next: CallbackWithoutResultAndOptionalError) {
   }
   next();
 });
+
+export type UserDocument = UserEntity & Document;

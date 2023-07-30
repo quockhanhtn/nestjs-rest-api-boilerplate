@@ -73,6 +73,10 @@ export abstract class MongooseBaseRepository<
       findAll.session(options.session);
     }
 
+    if (options?.lean) {
+      findAll.lean();
+    }
+
     return findAll.lean() as any;
   }
 
@@ -162,6 +166,10 @@ export abstract class MongooseBaseRepository<
       findOne.sort(options.order);
     }
 
+    if (options?.lean) {
+      findOne.lean();
+    }
+
     return findOne.exec() as any;
   }
 
@@ -202,6 +210,10 @@ export abstract class MongooseBaseRepository<
 
     if (options?.order) {
       findOne.sort(options.order);
+    }
+
+    if (options?.lean) {
+      findOne.lean();
     }
 
     return findOne.exec() as any;
@@ -370,12 +382,12 @@ export abstract class MongooseBaseRepository<
       );
     }
 
-    const result = await exist;
+    const result = await exist.lean();
     return result ? true : false;
   }
 
-  async create<Dto = any>(
-    data: Dto,
+  async create(
+    data: Partial<Entity>,
     options?: IMongooseCreateOptions<ClientSession>,
   ): Promise<EntityDocument> {
     const dataCreate: Record<string, any> = data;

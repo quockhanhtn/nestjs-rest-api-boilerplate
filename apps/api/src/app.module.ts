@@ -7,10 +7,11 @@ import { ConfigModule, MongodbModule } from '@libs/infrastructures';
 import { JwtAccessGuard } from './auth';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
-import { UsersModule } from './users/users.module';
+import { UserSessionModule } from './user-session/user-session.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [ConfigModule, MongodbModule, AuthModule, UsersModule, HealthModule],
+  imports: [ConfigModule, MongodbModule, AuthModule, UserModule, HealthModule, UserSessionModule],
   controllers: [],
   providers: [
     {
