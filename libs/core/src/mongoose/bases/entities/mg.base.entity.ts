@@ -1,7 +1,7 @@
 import { Prop } from '@nestjs/mongoose';
 import { v4 as uuidV4 } from 'uuid';
 
-export abstract class MongooseBaseEntity {
+export abstract class MgBaseEntity {
   @Prop({ type: String, default: uuidV4 })
   _id: string;
 

@@ -33,7 +33,7 @@ async function bootstrap() {
   await app.listen(configService.app.port);
 
   logger.log(`==========================================================`);
-  logger.log(`Server running on ${await app.getUrl()}`);
+  logger.log(`[${configService.app.env}] Server running on ${await app.getUrl()}`);
   logger.log(`==========================================================`);
 }
 

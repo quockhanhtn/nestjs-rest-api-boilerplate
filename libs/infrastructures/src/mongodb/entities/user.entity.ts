@@ -1,15 +1,15 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
 
-import { MongooseBaseEntity } from '@libs/core/mongoose/bases';
-import { MongooseEntity } from '@libs/core/mongoose/decorators';
+import { MgBaseEntity } from '@libs/core/mongoose/bases';
+import { MgEntity } from '@libs/core/mongoose/decorators';
 
 import { RoleEnum } from '../enums';
 
 export const UserCollectionName = 'users';
 
-@MongooseEntity({ collection: UserCollectionName })
-export class UserEntity extends MongooseBaseEntity {
+@MgEntity({ collection: UserCollectionName })
+export class UserEntity extends MgBaseEntity {
   @Prop({
     type: String,
     trim: true,

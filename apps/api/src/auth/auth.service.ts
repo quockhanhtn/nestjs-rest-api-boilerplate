@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidV4 } from 'uuid';
@@ -9,7 +9,14 @@ import { RoleEnum, UserDocument } from '@libs/infrastructures/mongodb';
 
 import { UserSessionService } from '../user-session/user-session.service';
 import { UserService } from '../user/user.service';
-import { JwtAccessPayloadData, JwtRefreshPayloadData, TokenPair } from './';
+import {
+  AccountNotFoundException,
+  InvalidInputException,
+  InvalidRefreshTokenException,
+  JwtAccessPayloadData,
+  JwtRefreshPayloadData,
+  TokenPair,
+} from './';
 import { AuthOutputDto, RegisterInputDto } from './dto';
 
 @Injectable()
@@ -19,20 +26,20 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly userService: UserService,
-    private readonly userSessionService: UserSessionService,
+    private readonly sessionService: UserSessionService,
   ) {}
 
   async register(input: RegisterInputDto, reqInfo: RequestInfoData): Promise<AuthOutputDto> {
     if (input.email) {
       const isExistingEmail = await this.userService.isExistingEmail(input.email);
       if (isExistingEmail) {
-        throw new HttpException('Email already taken', HttpStatus.BAD_REQUEST);
+        throw new InvalidInputException('Email already taken');
       }
     }
     if (input.phoneNumber) {
       const isExistingPhone = await this.userService.isExistingPhoneNumber(input.phoneNumber);
       if (isExistingPhone) {
-        throw new HttpException('Phone number already taken', HttpStatus.BAD_REQUEST);
+        throw new InvalidInputException('Phone number already taken');
       }
     }
 
@@ -57,12 +64,12 @@ export class AuthService {
     }
 
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new AccountNotFoundException();
     }
 
     const isCorrectPassword = await bcrypt.compare(password, user.hashedPwd);
     if (!isCorrectPassword) {
-      throw new HttpException('Password incorrect', HttpStatus.UNAUTHORIZED);
+      throw new InvalidInputException('Password incorrect');
     }
 
     const rs = await this._authentication(user, reqInfo);
@@ -70,9 +77,12 @@ export class AuthService {
   }
 
   async logout(sessionId: string, refreshToken: string) {
-    await this._validateRefreshToken(sessionId, refreshToken);
-    const rs = await this.userSessionService.clearPrevSession(sessionId);
-    return rs;
+    const isValid = await this.sessionService.validateSession(sessionId, refreshToken);
+    if (!isValid) {
+      throw new InvalidRefreshTokenException();
+    }
+    await this.sessionService.clearPrevSession(sessionId);
+    return true;
   }
 
   async refreshToken(
@@ -81,11 +91,15 @@ export class AuthService {
     refreshToken: string,
     reqInfo: RequestInfoData,
   ): Promise<TokenPair> {
-    await this._validateRefreshToken(sessionId, refreshToken);
+    const isValid = await this.sessionService.validateSession(sessionId, refreshToken);
+    if (!isValid) {
+      throw new InvalidRefreshTokenException();
+    }
+    await this.sessionService.clearPrevSession(sessionId);
 
     const role = await this.userService.getUserRole(userId);
     if (!role) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new AccountNotFoundException();
     }
 
     const [accessToken, newRefreshToken] = await Promise.all([
@@ -93,10 +107,7 @@ export class AuthService {
       this._generateRefreshToken(userId, sessionId),
     ]);
 
-    const hashedRt = await this._hashData(newRefreshToken);
-
-    await this.userSessionService.clearPrevSession(sessionId);
-    await this.userSessionService.createSession(userId, sessionId, hashedRt, reqInfo);
+    await this.sessionService.createSession(userId, sessionId, newRefreshToken, reqInfo);
 
     return {
       accessToken,
@@ -115,8 +126,7 @@ export class AuthService {
       this._generateRefreshToken(user._id, sessionId),
     ]);
 
-    const hashedRt = await this._hashData(refreshToken);
-    await this.userSessionService.createSession(user._id, sessionId, hashedRt, reqInfo);
+    await this.sessionService.createSession(user._id, sessionId, refreshToken, reqInfo);
 
     return {
       user: {
@@ -128,23 +138,6 @@ export class AuthService {
       },
       tokenPair: { accessToken, refreshToken },
     };
-  }
-
-  private async _validateRefreshToken(sessionId: string, refreshToken: string) {
-    const sessions = await this.userSessionService.findBySessionId(sessionId);
-    if (!sessions || sessions.length === 0 || sessions.length > 1) {
-      if (sessions.length > 1) {
-        await this.userSessionService.clearPrevSession(sessionId);
-      }
-      throw new HttpException('Refresh Token Invalid', HttpStatus.UNAUTHORIZED);
-    }
-    const currentSession = sessions[0];
-    const isMatch = await bcrypt.compare(refreshToken, currentSession.hashedRefreshToken);
-    if (!isMatch) {
-      await this.userSessionService.clearPrevSession(sessionId);
-      throw new HttpException('Refresh Token Invalid', HttpStatus.UNAUTHORIZED);
-    }
-    return true;
   }
 
   private _hashData(data: string): Promise<string> {

@@ -1,2 +1,2 @@
-export * from './mongoose.base.entity';
-export * from './mongoose.base.repository';
+export * from './entities';
+export * from './repositories';
