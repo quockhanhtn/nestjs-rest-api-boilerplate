@@ -6,12 +6,21 @@ import { ConfigModule, MongodbModule } from '@libs/infrastructures';
 
 import { JwtAccessGuard } from './auth';
 import { AuthModule } from './auth/auth.module';
+import { CategoryModule } from './category/category.module';
 import { HealthModule } from './health/health.module';
 import { UserSessionModule } from './user-session/user-session.module';
 import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [ConfigModule, MongodbModule, AuthModule, UserModule, HealthModule, UserSessionModule],
+  imports: [
+    ConfigModule,
+    MongodbModule,
+    AuthModule,
+    UserModule,
+    HealthModule,
+    UserSessionModule,
+    CategoryModule,
+  ],
   controllers: [],
   providers: [
     {

@@ -1,1 +1,1 @@
-export * from './mongoose.decorator';
+export * from './mg.decorator';

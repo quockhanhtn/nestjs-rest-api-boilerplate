@@ -12,6 +12,9 @@
   "collectCoverageFrom": [
     "**/*.(t|j)s"
   ],
+  "coveragePathIgnorePatterns": [
+    "index.ts"
+  ],
   "coverageDirectory": "./coverage",
   "testEnvironment": "node",
   "roots": [

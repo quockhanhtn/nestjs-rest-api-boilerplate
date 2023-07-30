@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 
-import { MongooseBaseRepository } from '@libs/core/mongoose/bases';
-import { MongooseModel } from '@libs/core/mongoose/decorators';
+import { MgBaseFlatRepository } from '@libs/core/mongoose/bases';
+import { MgModel } from '@libs/core/mongoose/decorators';
 
 import { UserDocument, UserEntity } from '../entities';
 
 @Injectable()
-export class UserRepository extends MongooseBaseRepository<UserEntity, UserDocument> {
+export class UserRepository extends MgBaseFlatRepository<UserEntity, UserDocument> {
   constructor(
-    @MongooseModel(UserEntity.name)
+    @MgModel(UserEntity.name)
     readonly dbModel: Model<UserEntity>,
   ) {
     super(dbModel);

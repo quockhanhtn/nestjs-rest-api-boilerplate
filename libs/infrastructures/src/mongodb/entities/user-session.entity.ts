@@ -2,16 +2,16 @@ import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
 import { v4 as uuidV4 } from 'uuid';
 
-import { MongooseBaseEntity } from '@libs/core/mongoose/bases';
-import { MongooseEntity } from '@libs/core/mongoose/decorators';
+import { MgBaseEntity } from '@libs/core/mongoose/bases';
+import { MgEntity } from '@libs/core/mongoose/decorators';
 import { RequestInfoData } from '@libs/core/request';
 
 import { UserEntity } from './user.entity';
 
 export const UserSessionCollectionName = 'user-sessions';
 
-@MongooseEntity({ collection: UserSessionCollectionName })
-export class UserSessionEntity extends MongooseBaseEntity {
+@MgEntity({ collection: UserSessionCollectionName })
+export class UserSessionEntity extends MgBaseEntity {
   @Prop({
     required: true,
     ref: UserEntity.name,

@@ -19,7 +19,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly userService: UserService,
-    private readonly userSessionService: UserSessionService,
+    private readonly sessionService: UserSessionService,
   ) {}
 
   async register(input: RegisterInputDto, reqInfo: RequestInfoData): Promise<AuthOutputDto> {
@@ -70,9 +70,12 @@ export class AuthService {
   }
 
   async logout(sessionId: string, refreshToken: string) {
-    await this._validateRefreshToken(sessionId, refreshToken);
-    const rs = await this.userSessionService.clearPrevSession(sessionId);
-    return rs;
+    const isValid = await this.sessionService.validateSession(sessionId, refreshToken);
+    if (!isValid) {
+      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+    }
+    await this.sessionService.clearPrevSession(sessionId);
+    return true;
   }
 
   async refreshToken(
@@ -81,7 +84,11 @@ export class AuthService {
     refreshToken: string,
     reqInfo: RequestInfoData,
   ): Promise<TokenPair> {
-    await this._validateRefreshToken(sessionId, refreshToken);
+    const isValid = await this.sessionService.validateSession(sessionId, refreshToken);
+    if (!isValid) {
+      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+    }
+    await this.sessionService.clearPrevSession(sessionId);
 
     const role = await this.userService.getUserRole(userId);
     if (!role) {
@@ -93,10 +100,7 @@ export class AuthService {
       this._generateRefreshToken(userId, sessionId),
     ]);
 
-    const hashedRt = await this._hashData(newRefreshToken);
-
-    await this.userSessionService.clearPrevSession(sessionId);
-    await this.userSessionService.createSession(userId, sessionId, hashedRt, reqInfo);
+    await this.sessionService.createSession(userId, sessionId, newRefreshToken, reqInfo);
 
     return {
       accessToken,
@@ -115,8 +119,7 @@ export class AuthService {
       this._generateRefreshToken(user._id, sessionId),
     ]);
 
-    const hashedRt = await this._hashData(refreshToken);
-    await this.userSessionService.createSession(user._id, sessionId, hashedRt, reqInfo);
+    await this.sessionService.createSession(user._id, sessionId, refreshToken, reqInfo);
 
     return {
       user: {
@@ -128,23 +131,6 @@ export class AuthService {
       },
       tokenPair: { accessToken, refreshToken },
     };
-  }
-
-  private async _validateRefreshToken(sessionId: string, refreshToken: string) {
-    const sessions = await this.userSessionService.findBySessionId(sessionId);
-    if (!sessions || sessions.length === 0 || sessions.length > 1) {
-      if (sessions.length > 1) {
-        await this.userSessionService.clearPrevSession(sessionId);
-      }
-      throw new HttpException('Refresh Token Invalid', HttpStatus.UNAUTHORIZED);
-    }
-    const currentSession = sessions[0];
-    const isMatch = await bcrypt.compare(refreshToken, currentSession.hashedRefreshToken);
-    if (!isMatch) {
-      await this.userSessionService.clearPrevSession(sessionId);
-      throw new HttpException('Refresh Token Invalid', HttpStatus.UNAUTHORIZED);
-    }
-    return true;
   }
 
   private _hashData(data: string): Promise<string> {

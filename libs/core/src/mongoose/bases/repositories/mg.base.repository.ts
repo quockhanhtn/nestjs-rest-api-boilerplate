@@ -1,25 +1,30 @@
-import { ClientSession, Document, Model, PipelineStage, PopulateOptions } from 'mongoose';
+import {
+  ClientSession,
+  Document,
+  FilterQuery,
+  Model,
+  PipelineStage,
+  PopulateOptions,
+} from 'mongoose';
 
 import {
-  IMongooseCreateManyOptions,
-  IMongooseCreateOptions,
-  IMongooseExistOptions,
-  IMongooseFindAllOptions,
-  IMongooseFindOneOptions,
-  IMongooseGetTotalOptions,
-  IMongooseManyOptions,
-  IMongooseRawOptions,
-  IMongooseRestoreManyOptions,
-  IMongooseSaveOptions,
-  IMongooseSoftDeleteManyOptions,
+  IMgCountOptions,
+  IMgCreateManyOptions,
+  IMgExistOptions,
+  IMgFindAllOptions,
+  IMgFindOneOptions,
+  IMgManyOptions,
+  IMgRawOptions,
+  IMgRestoreManyOptions,
+  IMgSaveOptions,
+  IMgSoftDeleteManyOptions,
 } from '@libs/core/mongoose/interfaces';
 
-import { MongooseBaseEntity } from './mongoose.base.entity';
+import { MG_DELETED_AT_FIELD_NAME } from '../../constants';
+import { MgBaseEntity } from '../entities';
 
-const DATABASE_DELETED_AT_FIELD_NAME = 'deletedAt';
-
-export abstract class MongooseBaseRepository<
-  Entity extends MongooseBaseEntity,
+export abstract class MgBaseRepository<
+  Entity extends MgBaseEntity,
   EntityDocument extends Document,
 > {
   protected _repository: Model<Entity>;
@@ -31,22 +36,18 @@ export abstract class MongooseBaseRepository<
   }
 
   async findAll<T = EntityDocument>(
-    find?: Record<string, any>,
-    options?: IMongooseFindAllOptions<ClientSession>,
+    find?: FilterQuery<EntityDocument>,
+    options?: IMgFindAllOptions<ClientSession>,
   ): Promise<T[]> {
     const findAll = this._repository.find<EntityDocument>(find);
 
     if (options?.withDeleted) {
       findAll.or([
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
-        },
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
-        },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: false } },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: true } },
       ]);
     } else {
-      findAll.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      findAll.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.select) {
@@ -82,22 +83,22 @@ export abstract class MongooseBaseRepository<
 
   async findAllDistinct<T = EntityDocument>(
     fieldDistinct: string,
-    find?: Record<string, any>,
-    options?: IMongooseFindAllOptions<ClientSession>,
+    find?: FilterQuery<EntityDocument>,
+    options?: IMgFindAllOptions<ClientSession>,
   ): Promise<T[]> {
     const findAll = this._repository.distinct<EntityDocument>(fieldDistinct, find);
 
     if (options?.withDeleted) {
       findAll.or([
         {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
+          [MG_DELETED_AT_FIELD_NAME]: { $exists: false },
         },
         {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
+          [MG_DELETED_AT_FIELD_NAME]: { $exists: true },
         },
       ]);
     } else {
-      findAll.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      findAll.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.select) {
@@ -128,22 +129,18 @@ export abstract class MongooseBaseRepository<
   }
 
   async findOne<T = EntityDocument>(
-    find: Record<string, any>,
-    options?: IMongooseFindOneOptions<ClientSession>,
+    find: FilterQuery<EntityDocument>,
+    options?: IMgFindOneOptions<ClientSession>,
   ): Promise<T> {
     const findOne = this._repository.findOne<EntityDocument>(find);
 
     if (options?.withDeleted) {
       findOne.or([
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
-        },
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
-        },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: false } },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: true } },
       ]);
     } else {
-      findOne.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      findOne.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.select) {
@@ -175,21 +172,17 @@ export abstract class MongooseBaseRepository<
 
   async findOneById<T = EntityDocument>(
     _id: string,
-    options?: IMongooseFindOneOptions<ClientSession>,
+    options?: IMgFindOneOptions<ClientSession>,
   ): Promise<T> {
     const findOne = this._repository.findById<EntityDocument>(_id);
 
     if (options?.withDeleted) {
       findOne.or([
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
-        },
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
-        },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: false } },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: true } },
       ]);
     } else {
-      findOne.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      findOne.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.select) {
@@ -220,8 +213,8 @@ export abstract class MongooseBaseRepository<
   }
 
   async findOneAndLock<T = EntityDocument>(
-    find: Record<string, any>,
-    options?: IMongooseFindOneOptions<ClientSession>,
+    find: FilterQuery<EntityDocument>,
+    options?: IMgFindOneOptions<ClientSession>,
   ): Promise<T> {
     const findOne = this._repository.findOneAndUpdate<EntityDocument>(find, {
       new: true,
@@ -230,15 +223,11 @@ export abstract class MongooseBaseRepository<
 
     if (options?.withDeleted) {
       findOne.or([
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
-        },
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
-        },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: false } },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: true } },
       ]);
     } else {
-      findOne.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      findOne.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.select) {
@@ -266,7 +255,7 @@ export abstract class MongooseBaseRepository<
 
   async findOneByIdAndLock<T = EntityDocument>(
     _id: string,
-    options?: IMongooseFindOneOptions<ClientSession>,
+    options?: IMgFindOneOptions<ClientSession>,
   ): Promise<T> {
     const findOne = this._repository.findByIdAndUpdate<EntityDocument>(_id, {
       new: true,
@@ -276,14 +265,14 @@ export abstract class MongooseBaseRepository<
     if (options?.withDeleted) {
       findOne.or([
         {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
+          [MG_DELETED_AT_FIELD_NAME]: { $exists: false },
         },
         {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
+          [MG_DELETED_AT_FIELD_NAME]: { $exists: true },
         },
       ]);
     } else {
-      findOne.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      findOne.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.select) {
@@ -309,23 +298,19 @@ export abstract class MongooseBaseRepository<
     return findOne.exec() as any;
   }
 
-  async getTotal(
-    find?: Record<string, any>,
-    options?: IMongooseGetTotalOptions<ClientSession>,
+  async count(
+    find?: FilterQuery<EntityDocument>,
+    options?: IMgCountOptions<ClientSession>,
   ): Promise<number> {
     const count = this._repository.countDocuments(find);
 
     if (options?.withDeleted) {
       count.or([
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
-        },
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
-        },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: false } },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: true } },
       ]);
     } else {
-      count.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      count.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.session) {
@@ -344,30 +329,24 @@ export abstract class MongooseBaseRepository<
   }
 
   async exists(
-    find: Record<string, any>,
-    options?: IMongooseExistOptions<ClientSession>,
+    find: FilterQuery<EntityDocument>,
+    options?: IMgExistOptions<ClientSession>,
   ): Promise<boolean> {
     if (options?.excludeId) {
       find = {
         ...find,
-        _id: {
-          $nin: options?.excludeId ?? [],
-        },
+        _id: { $nin: options?.excludeId ?? [] },
       };
     }
 
     const exist = this._repository.exists(find);
     if (options?.withDeleted) {
       exist.or([
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
-        },
-        {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
-        },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: false } },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: true } },
       ]);
     } else {
-      exist.where(DATABASE_DELETED_AT_FIELD_NAME).exists(false);
+      exist.where(MG_DELETED_AT_FIELD_NAME).exists(false);
     }
 
     if (options?.session) {
@@ -386,40 +365,23 @@ export abstract class MongooseBaseRepository<
     return result ? true : false;
   }
 
-  async create(
-    data: Partial<Entity>,
-    options?: IMongooseCreateOptions<ClientSession>,
-  ): Promise<EntityDocument> {
-    const dataCreate: Record<string, any> = data;
-
-    if (options?._id) {
-      dataCreate._id = options._id;
-    }
-
-    const created = await this._repository.create([dataCreate], {
-      session: options ? options.session : undefined,
-    });
-
-    return created[0] as EntityDocument;
-  }
-
   async save(
     repository: EntityDocument & Document<string>,
-    options?: IMongooseSaveOptions,
+    options?: IMgSaveOptions,
   ): Promise<EntityDocument> {
     return repository.save(options);
   }
 
   async delete(
     repository: EntityDocument & Document<string>,
-    options?: IMongooseSaveOptions,
+    options?: IMgSaveOptions,
   ): Promise<EntityDocument> {
     return repository.deleteOne(options);
   }
 
   async softDelete(
     repository: EntityDocument & Document<string> & { deletedAt?: Date },
-    options?: IMongooseSaveOptions,
+    options?: IMgSaveOptions,
   ): Promise<EntityDocument> {
     repository.deletedAt = new Date();
     return repository.save(options);
@@ -427,7 +389,7 @@ export abstract class MongooseBaseRepository<
 
   async restore(
     repository: EntityDocument & Document<string> & { deletedAt?: Date },
-    options?: IMongooseSaveOptions,
+    options?: IMgSaveOptions,
   ): Promise<EntityDocument> {
     repository.deletedAt = undefined;
     return repository.save(options);
@@ -436,7 +398,7 @@ export abstract class MongooseBaseRepository<
   // bulk
   async createMany<Dto>(
     data: Dto[],
-    options?: IMongooseCreateManyOptions<ClientSession>,
+    options?: IMgCreateManyOptions<ClientSession>,
   ): Promise<boolean> {
     const create = this._repository.insertMany(data, {
       session: options ? options.session : undefined,
@@ -451,12 +413,12 @@ export abstract class MongooseBaseRepository<
   }
 
   async deleteManyByIds(
-    _id: string[],
-    options?: IMongooseManyOptions<ClientSession>,
-  ): Promise<boolean> {
+    listIds: string[],
+    options?: IMgManyOptions<ClientSession>,
+  ): Promise<number> {
     const del = this._repository.deleteMany({
       _id: {
-        $in: _id,
+        $in: listIds,
       },
     });
 
@@ -473,17 +435,17 @@ export abstract class MongooseBaseRepository<
     }
 
     try {
-      await del;
-      return true;
+      const rs = await del.exec();
+      return rs.deletedCount;
     } catch (err: unknown) {
       throw err;
     }
   }
 
   async deleteMany(
-    find: Record<string, any>,
-    options?: IMongooseManyOptions<ClientSession>,
-  ): Promise<boolean> {
+    find: FilterQuery<EntityDocument>,
+    options?: IMgManyOptions<ClientSession>,
+  ): Promise<number> {
     const del = this._repository.deleteMany(find);
 
     if (options?.session) {
@@ -499,31 +461,25 @@ export abstract class MongooseBaseRepository<
     }
 
     try {
-      await del;
-      return true;
+      const rs = await del.exec();
+      return rs.deletedCount;
     } catch (err: unknown) {
       throw err;
     }
   }
 
   async softDeleteManyByIds(
-    _id: string[],
-    options?: IMongooseSoftDeleteManyOptions<ClientSession>,
-  ): Promise<boolean> {
+    listIds: string[],
+    options?: IMgSoftDeleteManyOptions<ClientSession>,
+  ): Promise<number> {
     const softDel = this._repository
       .updateMany(
+        { _id: { $in: listIds } },
         {
-          _id: {
-            $in: _id,
-          },
-        },
-        {
-          $set: {
-            deletedAt: new Date(),
-          },
+          $set: { deletedAt: new Date() },
         },
       )
-      .where(DATABASE_DELETED_AT_FIELD_NAME)
+      .where(MG_DELETED_AT_FIELD_NAME)
       .exists(false);
 
     if (options?.session) {
@@ -539,24 +495,24 @@ export abstract class MongooseBaseRepository<
     }
 
     try {
-      await softDel;
-      return true;
+      const rs = await softDel.exec();
+      return rs.modifiedCount;
     } catch (err: unknown) {
       throw err;
     }
   }
 
   async softDeleteMany(
-    find: Record<string, any>,
-    options?: IMongooseSoftDeleteManyOptions<ClientSession>,
-  ): Promise<boolean> {
+    find: FilterQuery<EntityDocument>,
+    options?: IMgSoftDeleteManyOptions<ClientSession>,
+  ): Promise<number> {
     const softDel = this._repository
       .updateMany(find, {
         $set: {
           deletedAt: new Date(),
         },
       })
-      .where(DATABASE_DELETED_AT_FIELD_NAME)
+      .where(MG_DELETED_AT_FIELD_NAME)
       .exists(false);
 
     if (options?.session) {
@@ -572,31 +528,25 @@ export abstract class MongooseBaseRepository<
     }
 
     try {
-      await softDel;
-      return true;
+      const rs = await softDel.exec();
+      return rs.modifiedCount;
     } catch (err: unknown) {
       throw err;
     }
   }
 
   async restoreManyByIds(
-    _id: string[],
-    options?: IMongooseRestoreManyOptions<ClientSession>,
-  ): Promise<boolean> {
+    listIds: string[],
+    options?: IMgRestoreManyOptions<ClientSession>,
+  ): Promise<number> {
     const rest = this._repository
       .updateMany(
+        { _id: { $in: listIds } },
         {
-          _id: {
-            $in: _id,
-          },
-        },
-        {
-          $set: {
-            deletedAt: undefined,
-          },
+          $set: { deletedAt: undefined },
         },
       )
-      .where(DATABASE_DELETED_AT_FIELD_NAME)
+      .where(MG_DELETED_AT_FIELD_NAME)
       .exists(true);
 
     if (options?.session) {
@@ -612,24 +562,22 @@ export abstract class MongooseBaseRepository<
     }
 
     try {
-      await rest;
-      return true;
+      const rs = await rest.exec();
+      return rs.modifiedCount;
     } catch (err: unknown) {
       throw err;
     }
   }
 
   async restoreMany(
-    find: Record<string, any>,
-    options?: IMongooseRestoreManyOptions<ClientSession>,
-  ): Promise<boolean> {
+    find: FilterQuery<EntityDocument>,
+    options?: IMgRestoreManyOptions<ClientSession>,
+  ): Promise<number> {
     const rest = this._repository
       .updateMany(find, {
-        $set: {
-          deletedAt: undefined,
-        },
+        $set: { deletedAt: undefined },
       })
-      .where(DATABASE_DELETED_AT_FIELD_NAME)
+      .where(MG_DELETED_AT_FIELD_NAME)
       .exists(true);
 
     if (options?.session) {
@@ -645,23 +593,23 @@ export abstract class MongooseBaseRepository<
     }
 
     try {
-      await rest;
-      return true;
+      const rs = await rest.exec();
+      return rs.modifiedCount;
     } catch (err: unknown) {
       throw err;
     }
   }
 
   async updateMany<Dto>(
-    find: Record<string, any>,
+    find: FilterQuery<EntityDocument>,
     data: Dto,
-    options?: IMongooseManyOptions<ClientSession>,
+    options?: IMgManyOptions<ClientSession>,
   ): Promise<boolean> {
     const update = this._repository
       .updateMany(find, {
         $set: data,
       })
-      .where(DATABASE_DELETED_AT_FIELD_NAME)
+      .where(MG_DELETED_AT_FIELD_NAME)
       .exists(false);
 
     if (options?.session) {
@@ -686,7 +634,7 @@ export abstract class MongooseBaseRepository<
 
   async raw<RawResponse, RawQuery = PipelineStage[]>(
     rawOperation: RawQuery,
-    options?: IMongooseRawOptions,
+    options?: IMgRawOptions,
   ): Promise<RawResponse[]> {
     if (!Array.isArray(rawOperation)) {
       throw new Error('Must in array');
@@ -699,12 +647,12 @@ export abstract class MongooseBaseRepository<
         $match: {
           $or: [
             {
-              [DATABASE_DELETED_AT_FIELD_NAME]: {
+              [MG_DELETED_AT_FIELD_NAME]: {
                 $exists: false,
               },
             },
             {
-              [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: true },
+              [MG_DELETED_AT_FIELD_NAME]: { $exists: true },
             },
           ],
         },
@@ -712,7 +660,7 @@ export abstract class MongooseBaseRepository<
     } else {
       pipeline.push({
         $match: {
-          [DATABASE_DELETED_AT_FIELD_NAME]: { $exists: false },
+          [MG_DELETED_AT_FIELD_NAME]: { $exists: false },
         },
       });
     }

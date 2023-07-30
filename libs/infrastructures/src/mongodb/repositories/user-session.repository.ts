@@ -1,16 +1,16 @@
 import { Model } from 'mongoose';
 
-import { MongooseBaseRepository } from '@libs/core/mongoose/bases';
-import { MongooseModel } from '@libs/core/mongoose/decorators';
+import { MgBaseFlatRepository } from '@libs/core/mongoose/bases';
+import { MgModel } from '@libs/core/mongoose/decorators';
 
 import { UserEntity, UserSessionDocument, UserSessionEntity } from '../entities';
 
-export class UserSessionRepository extends MongooseBaseRepository<
+export class UserSessionRepository extends MgBaseFlatRepository<
   UserSessionEntity,
   UserSessionDocument
 > {
   constructor(
-    @MongooseModel(UserSessionEntity.name)
+    @MgModel(UserSessionEntity.name)
     readonly dbModel: Model<UserSessionEntity>,
   ) {
     super(dbModel, {
