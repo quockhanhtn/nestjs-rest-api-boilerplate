@@ -14,12 +14,25 @@ export abstract class MgBaseNestedSetRepository<
 
   async create(
     data: Omit<Partial<Entity>, 'left' | 'right'> & {
-      parentId: string;
+      parentId?: string;
     },
     options?: IMgCreateOptions<ClientSession>,
   ): Promise<EntityDocument> {
-    const parentNode = await this._repository.findById(data.parentId, { right: 1 }).lean().exec();
-    const rightValue = parentNode ? parentNode.right : 0;
+    let rightValue = 0;
+    if (data?.parentId) {
+      const parentNode = await this._repository.findById(data.parentId, { right: 1 }).lean().exec();
+      if (parentNode && parentNode?.right) {
+        rightValue = parentNode.right;
+      }
+    }
+    if (rightValue === 0) {
+      const maxRight = await this._repository
+        .findOne({}, { right: 1 })
+        .sort({ right: -1 })
+        .lean()
+        .exec();
+      rightValue = (maxRight?.right ?? 0) + 1;
+    }
 
     // update left and right for other nodes
     await Promise.all([
