@@ -18,6 +18,7 @@ export class ConfigService {
 
   get app() {
     return {
+      env: this.loadedEnv.NODE_ENV,
       isDevelopment: this.loadedEnv.isDevelopment,
       isProduction: this.loadedEnv.isProduction,
       port: this.loadedEnv.PORT,
