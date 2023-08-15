@@ -31,4 +31,4 @@ export class CategoryEntity extends MgBaseNestedSetEntity {
 
 export const CategorySchema = SchemaFactory.createForClass(CategoryEntity);
 
-export type CategoryDocument = CategoryEntity & Document;
+export type CategoryDocument = MgBaseNestedSetEntity & CategoryEntity & Document;
