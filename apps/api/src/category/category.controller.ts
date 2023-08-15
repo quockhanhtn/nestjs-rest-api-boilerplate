@@ -5,6 +5,7 @@ import { JwtAccessPayload, JwtAccessPayloadData, Public } from '../auth';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 
+
 @ApiTags('categories')
 @Controller('categories')
 export class CategoryController {

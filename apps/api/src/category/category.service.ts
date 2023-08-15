@@ -27,6 +27,7 @@ export class CategoryService {
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     throw new Error('Method not implemented.');
   }
+
   async remove(id: string) {
     throw new Error('Method not implemented.');
   }
