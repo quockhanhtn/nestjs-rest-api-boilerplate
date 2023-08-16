@@ -8,7 +8,7 @@ import { RequestInfoData } from '@libs/core/request';
 
 import { UserEntity } from './user.entity';
 
-export const UserSessionCollectionName = 'user-sessions';
+export const UserSessionCollectionName = 'users-sessions';
 
 @MgEntity({ collection: UserSessionCollectionName })
 export class UserSessionEntity extends MgBaseEntity {

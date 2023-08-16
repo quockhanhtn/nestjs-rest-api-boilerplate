@@ -5,7 +5,7 @@ import * as compression from 'compression';
 
 import { ConfigService } from '@libs/infrastructures';
 
-import { AppModule } from './app.module';
+import { AppModule } from '@api/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

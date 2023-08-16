@@ -7,7 +7,7 @@ export const RequestInfo = createParamDecorator((_data: unknown, context: Execut
   const req = context.switchToHttp().getRequest();
 
   const ipAddress = req.connection.remoteAddress;
-  const ua = req.headers['user-agent'] ?? 'Unknown/Unknown';
+  const ua = req.headers['users-agent'] ?? 'Unknown/Unknown';
 
   const uaParser = getParser(ua);
 

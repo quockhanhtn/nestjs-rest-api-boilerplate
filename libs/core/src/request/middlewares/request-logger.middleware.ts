@@ -8,7 +8,7 @@ export class RequestLoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const { method, originalUrl, ip: ipRaw } = req;
     const ip = this.getFormattedIp(ipRaw);
-    const userAgent = req.get('user-agent') || '';
+    const userAgent = req.get('users-agent') || '';
     const startTime = Date.now();
 
     this.logger.log(`[${ip} ${userAgent}] --> ${method} ${originalUrl}`);

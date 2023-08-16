@@ -5,7 +5,7 @@ import { CryptoUtils } from '@libs/core/utils';
 import { MongodbService } from '@libs/infrastructures';
 
 @Injectable()
-export class UserSessionService {
+export class UserSessionsService {
   constructor(private readonly dbService: MongodbService) {}
 
   async createSession(

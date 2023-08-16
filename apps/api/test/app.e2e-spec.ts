@@ -1,8 +1,8 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 
-import { AppModule } from '../src/app.module';
+import { AppModule } from '@api/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -19,12 +19,12 @@ describe('AppController (e2e)', () => {
   it('/health (GET)', () => {
     return request(app.getHttpServer())
       .get('/health')
-      .expect(200)
+      .expect(HttpStatus.OK)
       .expect((response) => {
-        const { status, meta } = response.body;
+        const { status, requestInfo } = response.body;
         expect(status).toBe('ok');
-        expect(meta).toBeDefined();
-        expect(typeof meta).toBe('object');
+        expect(requestInfo).toBeDefined();
+        expect(typeof requestInfo).toBe('object');
       });
   });
 });

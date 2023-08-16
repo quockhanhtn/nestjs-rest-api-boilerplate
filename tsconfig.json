@@ -18,18 +18,12 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@libs/core": [
-        "libs/core/src"
-      ],
-      "@libs/core/*": [
-        "libs/core/src/*"
-      ],
-      "@libs/infrastructures": [
-        "libs/infrastructures/src"
-      ],
-      "@libs/infrastructures/*": [
-        "libs/infrastructures/src/*"
-      ]
+      "@api": ["apps/api/src"],
+      "@api/*": ["apps/api/src/*"],
+      "@libs/core": ["libs/core/src"],
+      "@libs/core/*": ["libs/core/src/*"],
+      "@libs/infrastructures": ["libs/infrastructures/src"],
+      "@libs/infrastructures/*": ["libs/infrastructures/src/*"]
     }
   }
 }

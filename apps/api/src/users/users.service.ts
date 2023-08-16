@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MongodbService, RoleEnum } from '@libs/infrastructures';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private readonly dbService: MongodbService) {}
 
   async isExistingEmail(email: string): Promise<boolean> {

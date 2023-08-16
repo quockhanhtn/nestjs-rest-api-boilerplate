@@ -11,6 +11,8 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
+    "@api/(.*)": "<rootDir>/../src/$1",
+    "@api": "<rootDir>/../src",
     "@libs/core/(.*)": "<rootDir>/../../../libs/core/src/$1",
     "@libs/core": "<rootDir>/../../../libs/core/src",
     "@libs/infrastructures/(.*)": "<rootDir>/../../../libs/infrastructures/src/$1",

@@ -22,6 +22,7 @@
     "<rootDir>/apps/"
   ],
   "moduleNameMapper": {
+    "^@api(|/.*)$": "<rootDir>/apps/api/src/$1",
     "^@libs/core(|/.*)$": "<rootDir>/libs/core/src/$1",
     "^@libs/infrastructures(|/.*)$": "<rootDir>/libs/infrastructures/src/$1"
   }

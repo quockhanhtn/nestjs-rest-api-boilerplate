@@ -1,33 +1,31 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
 
 import { RequestLoggerMiddleware } from '@libs/core/request';
 import { ConfigModule, MongodbModule } from '@libs/infrastructures';
 
-import { JwtAccessGuard } from './auth';
-import { AuthModule } from './auth/auth.module';
-import { CategoryModule } from './category/category.module';
-import { HealthModule } from './health/health.module';
-import { UserSessionModule } from './user-session/user-session.module';
-import { UserModule } from './user/user.module';
+import { AuthModule } from '@api/auth/auth.module';
+import { CategoriesModule } from '@api/categories/categories.module';
+import { HealthModule } from '@api/health/health.module';
+import { UserSessionsModule } from '@api/user-sessions/user-sessions.module';
+import { UsersModule } from '@api/users/users.module';
 
 @Module({
   imports: [
     ConfigModule,
     MongodbModule,
     AuthModule,
-    UserModule,
+    UsersModule,
     HealthModule,
-    UserSessionModule,
-    CategoryModule,
+    UserSessionsModule,
+    CategoriesModule,
   ],
   controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAccessGuard,
-    },
-  ],
+  // providers: [
+  //   {
+  //     provide: APP_GUARD,
+  //     useClass: JwtAccessGuard,
+  //   },
+  // ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

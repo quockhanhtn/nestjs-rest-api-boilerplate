@@ -20,7 +20,7 @@ module.exports = {
     '',
     '^@libs/(.*)$',
     '',
-    '^src/(.*)$',
+    '^@api/(.*)$',
     '',
     '^[.]', // relative imports
   ],

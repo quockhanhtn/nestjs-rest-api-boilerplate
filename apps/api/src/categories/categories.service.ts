@@ -5,7 +5,7 @@ import { MongodbService } from '@libs/infrastructures';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 
 @Injectable()
-export class CategoryService {
+export class CategoriesService {
   constructor(private readonly dbService: MongodbService) {}
 
   async findAll() {

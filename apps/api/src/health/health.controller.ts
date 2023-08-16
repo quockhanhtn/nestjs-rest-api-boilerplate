@@ -3,9 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { RequestInfo, RequestInfoData } from '@libs/core/request';
 
-import { Public } from '../auth';
-
-@Public()
 @ApiTags('health')
 @Controller('health')
 export class HealthController {
