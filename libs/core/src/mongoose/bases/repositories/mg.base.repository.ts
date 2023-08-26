@@ -90,12 +90,8 @@ export abstract class MgBaseRepository<
 
     if (options?.withDeleted) {
       findAll.or([
-        {
-          [MG_DELETED_AT_FIELD_NAME]: { $exists: false },
-        },
-        {
-          [MG_DELETED_AT_FIELD_NAME]: { $exists: true },
-        },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: false } },
+        { [MG_DELETED_AT_FIELD_NAME]: { $exists: true } },
       ]);
     } else {
       findAll.where(MG_DELETED_AT_FIELD_NAME).exists(false);
@@ -163,7 +159,7 @@ export abstract class MgBaseRepository<
       findOne.sort(options.order);
     }
 
-    if (options?.lean) {
+    if (options?.lean !== false) {
       findOne.lean();
     }
 
@@ -205,7 +201,7 @@ export abstract class MgBaseRepository<
       findOne.sort(options.order);
     }
 
-    if (options?.lean) {
+    if (options?.lean !== false) {
       findOne.lean();
     }
 

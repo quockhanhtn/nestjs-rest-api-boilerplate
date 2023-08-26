@@ -27,6 +27,7 @@ module.exports = {
       {
         ignoreRestSiblings: false,
         args: 'none',
+        argsIgnorePattern: '^_',
       },
     ],
   },

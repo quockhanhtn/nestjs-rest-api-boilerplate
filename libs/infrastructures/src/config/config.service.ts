@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as dotenv from 'dotenv';
-import { cleanEnv, port, str, url } from 'envalid';
+import { cleanEnv, num, port, str, url } from 'envalid';
 
 @Injectable()
 export class ConfigService {
@@ -33,11 +33,14 @@ export class ConfigService {
 
   get jwt() {
     return {
-      atSecret: this.loadedEnv.AUTH_JWT_ACCESS_TOKEN_SECRET,
-      atExpired: this.loadedEnv.AUTH_JWT_ACCESS_TOKEN_EXPIRED,
-
-      rtSecret: this.loadedEnv.AUTH_JWT_REFRESH_TOKEN_SECRET,
-      rtExpired: this.loadedEnv.AUTH_JWT_REFRESH_TOKEN_EXPIRED,
+      accessToken: {
+        secret: this.loadedEnv.JWT_ACCESS_TOKEN_SECRET,
+        expirationTime: this.loadedEnv.JWT_ACCESS_TOKEN_EXPIRATION_TIME,
+      },
+      refreshToken: {
+        secret: this.loadedEnv.JWT_REFRESH_TOKEN_SECRET,
+        expirationTime: this.loadedEnv.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
+      },
     };
   }
 }
@@ -56,10 +59,9 @@ const loadCleanEnv = () => {
       docs: 'https://www.mongodb.com/docs/manual/reference/connection-string/',
     }),
 
-    AUTH_JWT_ACCESS_TOKEN_SECRET: str({ default: 'access-token-secret' }),
-    AUTH_JWT_ACCESS_TOKEN_EXPIRED: str({ default: '15m' }),
-
-    AUTH_JWT_REFRESH_TOKEN_SECRET: str({ default: 'fresh-token-secret' }),
-    AUTH_JWT_REFRESH_TOKEN_EXPIRED: str({ default: '30d' }),
+    JWT_ACCESS_TOKEN_SECRET: str(),
+    JWT_ACCESS_TOKEN_EXPIRATION_TIME: num({ default: 15 * 60 /* 15 minutes */ }),
+    JWT_REFRESH_TOKEN_SECRET: str(),
+    JWT_REFRESH_TOKEN_EXPIRATION_TIME: num({ default: 30 * 60 * 60 * 24 /* 30 days */ }),
   });
 };

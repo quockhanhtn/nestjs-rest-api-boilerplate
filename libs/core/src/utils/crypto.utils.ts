@@ -1,4 +1,4 @@
-import { BinaryLike, createHash } from 'node:crypto';
+import { createHash, type BinaryLike } from 'node:crypto';
 
 export class CryptoUtils {
   static hashData(plainText: BinaryLike, algorithm = 'sha256') {
